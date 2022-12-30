@@ -1,0 +1,4 @@
+project/db-data/postgres/*
+node_modules
+.env
+generated
