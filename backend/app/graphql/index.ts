@@ -2,14 +2,10 @@ import { schema } from "./schema.ts";
 import {
     Router,
     Middleware,
-    GraphQLHTTP,
+    createYoga
 } from "../deps.ts";
 
-const resolve = GraphQLHTTP({
-    schema,
-    graphiql: true,
-    context: (request) => ({ request }),
-});
+const yoga = createYoga({ schema });
 
 const handleGraphQL: Middleware = async (ctx) => {
     // cast Oak request into a normal Request
@@ -19,10 +15,9 @@ const handleGraphQL: Middleware = async (ctx) => {
         method: ctx.request.method,
     });
 
-    const res = await resolve(req);
+    const res = await yoga.handle(req);
 
-    for (const [k, v] of res.headers.entries())
-        ctx.response.headers.append(k, v);
+    res.headers.forEach((v, k) => ctx.response.headers.append(k, v));
 
     ctx.response.status = res.status;
     ctx.response.body = res.body;

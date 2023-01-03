@@ -6,12 +6,6 @@ WORKDIR /deno-dir
 
 COPY app .
 
-RUN deno cache deps.ts
-
-RUN deno cache main.ts
-
 RUN chown -R deno:deno /deno-dir
 
-RUN mkdir -p /var/tmp/log
-
-CMD ["run", "--allow-all", "main.ts"]
+CMD ["run", "--allow-all", "--unstable", "npm:prisma@^4.8", "generate", "--data-proxy"]

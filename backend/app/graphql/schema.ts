@@ -1,11 +1,18 @@
 
-import { makeExecutableSchema, gql } from "../deps.ts";
+import { SchemaBuilder } from "../deps.ts";
 import { resolvers } from "./resolvers.ts";
 
-const typeDefs = gql`
-    type Query {
-        hello: String
-    }
-`;
+const builder = new SchemaBuilder({});
 
-export const schema = makeExecutableSchema({ resolvers, typeDefs });
+builder.queryType({
+  fields: (t) => ({
+    hello: t.string({
+      args: {
+        name: t.arg.string(),
+      },
+      resolve: (parent, { name }) => `hello, ${name || 'World'}`,
+    }),
+  }),
+});
+
+export const schema = builder.toSchema();

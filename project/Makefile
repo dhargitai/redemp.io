@@ -16,8 +16,12 @@ down:
 	docker-compose down
 	@echo "Done!"
 
-## build_backend: builds the necessary things for the backend
-build_backend:
-	@echo "Building Prisma client..."
-	cd ../backend/app && 
+## generate_backend_requirements: generates required things for the backend
+generate_backend_requirements:
+	@echo "Generating Prisma client..."
+	cd ../backend && \
+		docker build -f builder.dockerfile -t builder . && \
+		rm -rf app/generated && \
+		docker run --rm -it -v "$(shell pwd)/../backend/app/generated":/deno-dir/generated builder && \
+		docker rmi builder
 	@echo "Done!"
